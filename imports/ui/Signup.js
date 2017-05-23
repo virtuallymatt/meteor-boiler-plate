@@ -1,16 +1,20 @@
 import React from 'react';
 import { Link } from 'react-router';
 import { Accounts } from 'meteor/accounts-base';
+import {createContainer}  from 'meteor/react-meteor-data';
 
-export default class Signup extends React.Component {
+//setup export and props
+export class Signup extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       error: ''
     };
   }
+
+  //event handler for submit button signup
   onSubmit(e) {
-    e.preventDefault();
+    e.preventDefault(); //prevent page refresh
 
     let email = this.refs.email.value.trim();
     let password = this.refs.password.value.trim();
@@ -19,7 +23,7 @@ export default class Signup extends React.Component {
       return this.setState({error: 'Password must be more than 8 characters long'});
     }
 
-    Accounts.createUser({email, password}, (err) => {
+  this.props.createUser({email, password}, (err) => {
       if (err) {
         this.setState({error: err.reason});
       } else {
@@ -27,6 +31,8 @@ export default class Signup extends React.Component {
       }
     });
   }
+
+  //render signup form
   render() {
     return (
       <div className="boxed-view">
@@ -47,3 +53,13 @@ export default class Signup extends React.Component {
     );
   }
 }
+
+Signup.propTypes = {
+  createuser: React.PropTypes.func.isRequired
+};
+
+export default createContainer(() => {
+  return {
+    createUser: Account.createUser
+  };
+}, Signup)
